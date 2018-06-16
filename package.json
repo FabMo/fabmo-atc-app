@@ -1,7 +1,7 @@
 {
   "name": "ATC",
   "license": "MIT",
-  "id":"atc",
+  "id": "atc",
   "main": "./index.html",
   "icon": "icon.png",
   "icon_color": "#360d61",
@@ -9,8 +9,7 @@
   "author": "Ryan Sturmer",
   "description": "ATC",
   "dependencies": {
-    "bulma": "^0.4.2",
-    "font-awesome": "^4.7.0",
+    "bulma": "^0.7.1",
     "fontawesome": "^4.7.2"
   }
 }

@@ -3,7 +3,6 @@ function getFile(url, options) {
 	return new Promise(function(resolve, reject) {
 		function onLoad () {
 			console.info(this.status)
-			console.log(this.responseText)
 			switch(this.status) {
 				case 0:
 				case 200:
@@ -63,7 +62,6 @@ function doSBP(sbpCode, name) {
 function doSBPURL(url) {
 	return getFile(url)
 		.then(function resolve(data) {
-			console.log(data);
 			return doSBP(data);
 		});
 }

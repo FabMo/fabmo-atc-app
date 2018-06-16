@@ -24,26 +24,48 @@ function doModal(options) {
 		}
 		okButton = document.getElementById('btn-modal-ok');
 		cancelButton = document.getElementById('btn-modal-cancel');
-		
+		textInput = document.getElementById('txt-modal-input');
+
 		okButton.style.display = options.hideOk ? 'none' : 'block'
 		cancelButton.style.display = options.hideCancel ? 'none' : 'block'
-		
+		textInput.style.display = options.onText ? 'block' : 'none'			
+		textInput.value = options.defaultText || '';
+
+		textEnterHandler = function(arg) {
+			(options.onText || function() {})(textInput.value)	
+			fulfill(arg);
+		}
+
 		okButtonHandler = function(arg) {
-			(options.onOk || function() {})()
+			(options.onOk || function() {})()				
 			fulfill(arg);
 		}
 		cancelButtonHandler = function(arg) {
 			(options.onCancel || function() {})()
 			reject(arg);
 		}
+
 		okButton.addEventListener('click',function(evt) {closeModal(true)});
 		cancelButton.addEventListener('click',function(evt) {closeModal(false)});
-		
+		textInput.addEventListener('keyup', function(evt) {
+				event.preventDefault();
+				// Number 13 is the "Enter" key on the keyboard
+				if (event.keyCode === 13) {
+				// Trigger the button element with a click
+					closeModal(true)
+				}
+		});
 		var message = options.message || options.text || options.description || '&nbsp;';
 		document.getElementById('txt-modal-message').innerHTML = message;
 		document.getElementById('txt-modal-title').innerHTML = options.title || '&nbsp;';
 
 		modal.className = 'modal is-active'
+
+		if(options.onText) {
+			textInput.focus();
+			textInput.select();
+		}
+
 	});
 }
 
@@ -53,15 +75,26 @@ function doModal(options) {
  */
 function closeModal(ok) {
 	var modal = document.getElementById('modal')
-	okButton.removeEventListener('click', okButtonHandler)
-	cancelButton.removeEventListener('click', cancelButtonHandler)
-	modal.className = 'modal';			
-	if(okButtonHandler) {
+	modal.className = 'modal';	
+
+	['btn-modal-ok','btn-modal-cancel','txt-modal-input'].forEach(function(s) {
+		var e = document.getElementById(s);
+		var ep = e.cloneNode(true);
+		e.parentNode.replaceChild(ep, e);
+	});
+
+	
+	if(textEnterHandler) {
+		if(ok) {
+			textEnterHandler();
+		}
+	}	
+	else if(okButtonHandler) {
 		if(ok) {
 			okButtonHandler(ok);
 		}
 	}
-	if(cancelButtonHandler) {
+	else if(cancelButtonHandler) {
 		if(!ok) {
 			cancelButtonHandler(new Error('cancel'));
 		}
